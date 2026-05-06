@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="description" content="UrbaLens — Civic issue reporting and real-time urban visualization platform" />
   <title>UrbaLens — Urban Intelligence</title>
-  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 </head>
@@ -329,8 +329,8 @@
 
 <!-- ── App Modules ── -->
 <script type="module">
-  import { bootstrap, PriorityEngine } from './js/app.js';
-  import { initMap } from './js/map.js';
+ import { bootstrap, PriorityEngine } from './app.js';
+import { initMap } from './map.js';
 
   window.UrbaLens = window.UrbaLens || {};
   window.UrbaLens.initMap = initMap;
