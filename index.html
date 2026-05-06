@@ -117,6 +117,152 @@
       cursor: pointer;
     }
     .iw-share:hover { background: #f0e4cc; }
+
+    /* ── Search Bar ── */
+    .search-bar {
+      position: fixed;
+      top: 66px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(520px, calc(100vw - 32px));
+      z-index: 90;
+    }
+    .search-input-wrap {
+      display: flex;
+      align-items: center;
+      background: rgba(253,248,240,0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(90,60,30,0.12);
+      border-radius: 14px;
+      box-shadow: 0 4px 24px rgba(62,37,16,0.14);
+      padding: 0 10px 0 14px;
+      gap: 8px;
+      height: 48px;
+    }
+    .search-icon {
+      color: #b89a7a;
+      flex-shrink: 0;
+    }
+    .search-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 0.88rem;
+      color: #5c3d28;
+      outline: none;
+      min-width: 0;
+    }
+    .search-input::placeholder { color: #b89a7a; }
+    .search-clear {
+      width: 28px;
+      height: 28px;
+      border: none;
+      background: #f0e4cc;
+      border-radius: 50%;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      color: #6b4e35;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .search-clear:hover { background: #e4d0b0; }
+    .search-btn {
+      height: 34px;
+      padding: 0 14px;
+      background: #5c3d28;
+      color: #fdf8f0;
+      border: none;
+      border-radius: 9px;
+      font-family: 'DM Sans', system-ui, sans-serif;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+    .search-btn:hover { background: #3e2510; }
+    .search-results {
+      background: rgba(253,248,240,0.98);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(90,60,30,0.12);
+      border-radius: 12px;
+      box-shadow: 0 8px 32px rgba(62,37,16,0.16);
+      margin-top: 6px;
+      overflow: hidden;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .search-result-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 14px;
+      cursor: pointer;
+      border-bottom: 1px solid rgba(90,60,30,0.07);
+      transition: background 0.15s;
+    }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background: #f8f0e3; }
+    .sri-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: #f0e4cc;
+      display: grid;
+      place-items: center;
+      flex-shrink: 0;
+      color: #c17f4a;
+    }
+    .sri-name {
+      font-size: 0.84rem;
+      font-weight: 500;
+      color: #5c3d28;
+      margin-bottom: 2px;
+    }
+    .sri-detail {
+      font-size: 0.72rem;
+      color: #b89a7a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 360px;
+    }
+    .search-empty {
+      padding: 20px 14px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #b89a7a;
+    }
+    .search-loading {
+      padding: 16px 14px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: #b89a7a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .spinner {
+      width: 14px;
+      height: 14px;
+      border: 2px solid #e4d0b0;
+      border-top-color: #c17f4a;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @media (max-width: 767px) {
+      .search-bar {
+        top: 62px;
+        width: calc(100vw - 24px);
+      }
+      .search-btn { display: none; }
+    }
   </style>
 </head>
 <body>
@@ -161,6 +307,33 @@
     </div>
   </header>
 
+
+  <!-- Search Bar -->
+  <div class="search-bar" id="search-bar">
+    <div class="search-input-wrap">
+      <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        id="search-input"
+        class="search-input"
+        placeholder="Search any city, area or address..."
+        autocomplete="off"
+        onkeydown="handleSearchKey(event)"
+        oninput="handleSearchInput(this.value)"
+      />
+      <button class="search-clear" id="search-clear" onclick="clearSearch()" style="display:none">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+      <button class="search-btn" onclick="doSearch()">
+        Search
+      </button>
+    </div>
+    <div class="search-results" id="search-results" style="display:none"></div>
+  </div>
   <!-- Side Panel -->
   <aside class="side-panel" id="side-panel">
     <div class="panel-header">
@@ -734,11 +907,26 @@ function shareReport(id) {
 function shareMapView() {
   const center = map.getCenter();
   const zoom = map.getZoom();
-  const url = `${location.href.split('?')[0]}?lat=${center.lat.toFixed(5)}&lng=${center.lng.toFixed(5)}&z=${zoom}`;
+  const url = location.href.split('?')[0] + '?lat=' + center.lat.toFixed(5) + '&lng=' + center.lng.toFixed(5) + '&z=' + zoom;
   if (navigator.share) {
-    navigator.share({ title: 'UrbaLens — Urban Issue Map', url });
-  } else if (navigator.clipboard) {
-    navigator.clipboard.writeText(url).then(() => showToast('Map link copied', 'success'));
+    navigator.share({ title: 'UrbaLens — Urban Issue Map', url: url })
+      .catch(() => fallbackCopy(url));
+  } else {
+    fallbackCopy(url);
+  }
+}
+
+function fallbackCopy(text) {
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(() => showToast('Map link copied to clipboard', 'success'));
+  } else {
+    const el = document.createElement('textarea');
+    el.value = text;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    showToast('Map link copied!', 'success');
   }
 }
 
@@ -756,49 +944,15 @@ function showToast(message, type = 'info') {
   }, 3200);
 }
 
-// ── Seed demo data ──
-function seedIfEmpty() {
-  if (loadReports().length > 0) return;
-  const cats = ['road','garbage','drainage','streetlight'];
-  const sevs = [2,3,3,4,5,2,4,3,5,1];
-  const descs = [
-    'Large pothole causing vehicle damage near the junction',
-    'Accumulated waste near residential area for 3 days',
-    'Blocked drainage causing flooding after rain',
-    'Streetlight has been out for a week',
-    'Road completely broken near school zone',
-    'Garbage bin overflowing onto sidewalk',
-    'Water logging near the main road',
-    'Damaged road surface after recent construction',
-    null, null
-  ];
-  // Chittagong area coordinates
-  const spots = [
-    [22.3569, 91.7832],[22.3612, 91.7754],[22.3489, 91.7901],
-    [22.3701, 91.7823],[22.3534, 91.7698],[22.3678, 91.7912],
-    [22.3445, 91.7834],[22.3590, 91.7765],[22.3623, 91.7843],
-    [22.3512, 91.7921]
-  ];
 
-  spots.forEach((spot, i) => {
-    const hoursAgo = Math.floor(Math.random() * 72);
-    saveReport({
-      id: `seed_${i}`,
-      category: cats[i % cats.length],
-      severity: sevs[i],
-      description: descs[i],
-      latitude: spot[0] + (Math.random()-0.5)*0.008,
-      longitude: spot[1] + (Math.random()-0.5)*0.008,
-      imageData: null,
-      timestamp: new Date(Date.now() - hoursAgo*3600000).toISOString()
-    });
-  });
-}
 
 // ── Boot ──
 window.addEventListener('DOMContentLoaded', () => {
+  // Remove demo data if present
+  try { const r=JSON.parse(localStorage.getItem("ul_reports")||"[]"); localStorage.setItem("ul_reports",JSON.stringify(r.filter(x=>!x.id.startsWith("seed_")))); } catch(e){}
+
   initLeafletMap();
-  seedIfEmpty();
+
   render();
 
   // Open panel on desktop
@@ -815,6 +969,108 @@ window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => focusReport(params.get('report')), 1000);
   }
 });
+
+// ── Search (Nominatim — free, no API key) ──
+let searchDebounce = null;
+let searchMarker = null;
+
+function handleSearchKey(e) {
+  if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+  if (e.key === 'Escape') { clearSearch(); }
+}
+
+function handleSearchInput(val) {
+  const clear = document.getElementById('search-clear');
+  if (clear) clear.style.display = val.length > 0 ? 'grid' : 'none';
+  clearTimeout(searchDebounce);
+  if (val.length < 3) { hideResults(); return; }
+  searchDebounce = setTimeout(() => doSearch(val), 500);
+}
+
+async function doSearch(query) {
+  query = query || document.getElementById('search-input').value.trim();
+  if (!query || query.length < 2) return;
+
+  showLoading();
+  try {
+    const url = 'https://nominatim.openstreetmap.org/search?format=json&limit=5&q=' + encodeURIComponent(query);
+    const res = await fetch(url, { headers: { 'Accept-Language': 'en' } });
+    const data = await res.json();
+    showResults(data);
+  } catch(e) {
+    showResults([]);
+  }
+}
+
+function showLoading() {
+  const r = document.getElementById('search-results');
+  r.style.display = 'block';
+  r.innerHTML = '<div class="search-loading"><div class="spinner"></div> Searching...</div>';
+}
+
+function showResults(data) {
+  const r = document.getElementById('search-results');
+  r.style.display = 'block';
+  if (!data.length) {
+    r.innerHTML = '<div class="search-empty">No results found. Try a different search.</div>';
+    return;
+  }
+  r.innerHTML = data.map((item, i) => {
+    const name = item.name || item.display_name.split(',')[0];
+    const detail = item.display_name;
+    const type = item.type || item.class || 'place';
+    return `<div class="search-result-item" onclick="goToResult(${item.lat}, ${item.lon}, '${name.replace(/'/g,"\'")}', '${detail.replace(/'/g,"\'")}')">
+      <div class="sri-icon">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="10" r="3"/><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"/></svg>
+      </div>
+      <div style="min-width:0">
+        <div class="sri-name">${name}</div>
+        <div class="sri-detail">${detail}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function goToResult(lat, lng, name, detail) {
+  lat = parseFloat(lat); lng = parseFloat(lng);
+  map.setView([lat, lng], 15);
+
+  if (searchMarker) map.removeLayer(searchMarker);
+  searchMarker = L.marker([lat, lng], {
+    icon: L.divIcon({
+      className: '',
+      html: `<div style="width:20px;height:20px;border-radius:50%;background:#c17f4a;border:3px solid white;box-shadow:0 2px 8px rgba(0,0,0,.3)"></div>`,
+      iconSize: [20, 20],
+      iconAnchor: [10, 10],
+      popupAnchor: [0, -12]
+    })
+  }).addTo(map);
+  searchMarker.bindPopup(`<div style="font-family:'DM Sans',sans-serif;padding:6px 2px"><b style="font-size:.9rem;color:#5c3d28">${name}</b><br><span style="font-size:.72rem;color:#b89a7a">${detail}</span></div>`).openPopup();
+
+  document.getElementById('search-input').value = name;
+  hideResults();
+  document.getElementById('search-clear').style.display = 'grid';
+  showToast('Navigated to ' + name, 'success');
+}
+
+function hideResults() {
+  const r = document.getElementById('search-results');
+  if (r) r.style.display = 'none';
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  hideResults();
+  if (searchMarker) { map.removeLayer(searchMarker); searchMarker = null; }
+}
+
+// Close results when clicking outside
+document.addEventListener('click', (e) => {
+  const bar = document.getElementById('search-bar');
+  if (bar && !bar.contains(e.target)) hideResults();
+});
+
 </script>
 
 </body>
